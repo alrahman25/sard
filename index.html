@@ -1,0 +1,977 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>مسابقة سرد قرآني</title>
+    <style>
+      :root {
+        --primary: #b56f8d;
+        --primary-soft: #eab6c8;
+        --accent: #7d8dc8;
+        --cream: #fffafc;
+        --text: #5b4352;
+        --muted: #8a6b7b;
+        --shadow: 0 18px 45px rgba(181, 111, 141, 0.16);
+        --gold: #fff5d9;
+        --silver: #f3f1f6;
+        --bronze: #f8e5dc;
+      }
+
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        font-family: "Tajawal", "Segoe UI", Arial, sans-serif;
+        background:
+          radial-gradient(circle at top left, rgba(255, 199, 92, 0.32), transparent 28%),
+          radial-gradient(circle at bottom right, rgba(120, 180, 120, 0.22), transparent 24%),
+          linear-gradient(135deg, #fff7eb 0%, #fde8cf 100%);
+        color: var(--text);
+        min-height: 100vh;
+        padding: 24px;
+        overflow-x: hidden;
+        position: relative;
+      }
+
+      body::before,
+      body::after {
+        content: "";
+        position: fixed;
+        inset: auto;
+        width: 420px;
+        height: 420px;
+        border-radius: 50%;
+        background: rgba(139, 106, 79, 0.08);
+        animation: drift 18s ease-in-out infinite alternate;
+        z-index: 0;
+        pointer-events: none;
+      }
+
+      body::before {
+        top: -120px;
+        right: -140px;
+      }
+
+      body::after {
+        bottom: -180px;
+        left: -120px;
+        animation-duration: 22s;
+      }
+
+      .page {
+        max-width: 1100px;
+        margin: 0 auto;
+        position: relative;
+        z-index: 1;
+        zoom: 0.9;
+      }
+
+      .hero {
+        background: #c98ba7;
+        color: white;
+        border-radius: 28px;
+        padding: 32px;
+        box-shadow: var(--shadow);
+        position: relative;
+        overflow: hidden;
+        text-align: center;
+      }
+
+      .hero::before,
+      .hero::after {
+        content: "";
+        position: absolute;
+        border-radius: 50%;
+        background: rgba(255,255,255,0.16);
+      }
+
+      .hero::before {
+        width: 220px;
+        height: 220px;
+        top: -70px;
+        left: -60px;
+      }
+
+      .hero::after {
+        width: 180px;
+        height: 180px;
+        bottom: -80px;
+        right: -30px;
+      }
+
+      .hero h1 {
+        margin: 0 0 10px;
+        font-size: clamp(1.8rem, 3vw, 2.5rem);
+      }
+
+      .circle-name {
+        display: inline-block;
+        margin: 4px 0 10px;
+        padding: 7px 24px;
+        border: 1px solid rgba(255, 255, 255, 0.55);
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.16);
+        font-size: clamp(1.3rem, 2.2vw, 1.75rem);
+        font-weight: 800;
+        letter-spacing: 0.02em;
+      }
+
+      .hero p {
+        margin: 0;
+        font-size: 1.05rem;
+        line-height: 1.8;
+        max-width: 700px;
+        margin-inline: auto;
+      }
+
+      .panel {
+        background: rgba(255,255,255,0.86);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255,255,255,0.7);
+        border-radius: 24px;
+        padding: 24px;
+        margin-top: 22px;
+        box-shadow: var(--shadow);
+      }
+
+      .panel-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin-bottom: 16px;
+        position: relative;
+      }
+
+      .panel-header h2 {
+        margin: 0;
+        font-size: 1.4rem;
+      }
+
+      .hint {
+        color: var(--muted);
+        font-size: 0.95rem;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(220px, 1fr));
+        justify-content: center;
+        gap: 2px 18px;
+        align-items: stretch;
+        margin-top: 8px;
+      }
+
+      .card {
+        background: var(--cream);
+        border-radius: 20px;
+        padding: 14px 18px;
+        border: 1px solid rgba(181, 111, 141, 0.14);
+        box-shadow: 0 10px 25px rgba(91, 109, 91, 0.08);
+        transition: transform 0.25s ease, box-shadow 0.25s ease;
+        min-height: 220px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .card.top-first {
+        grid-column: 2;
+        grid-row: 1;
+        transform: translateY(8px);
+      }
+
+      .card.top-first.is-ranked {
+        transform: translateY(-28px);
+      }
+
+      .card.top-second {
+        grid-column: 1;
+        grid-row: 1;
+        transform: translateY(8px);
+      }
+
+      .card.top-third {
+        grid-column: 3;
+        grid-row: 1;
+        transform: translateY(8px);
+      }
+
+      .card::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: rgba(255,255,255,0.15);
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        pointer-events: none;
+      }
+
+      .card:hover::before {
+        opacity: 1;
+      }
+
+      .card.gold {
+        background: var(--gold);
+        color: #6b5940;
+        border-color: #f0dfad;
+      }
+
+      .card.silver {
+        background: var(--silver);
+        color: #5d5967;
+        border-color: #ded9e5;
+      }
+
+      .card.bronze {
+        background: var(--bronze);
+        color: #6d5046;
+        border-color: #ebcec1;
+      }
+
+      .card.neutral {
+        background: var(--cream);
+        color: var(--text);
+      }
+
+      .card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 16px 32px rgba(75, 53, 87, 0.12);
+      }
+
+      .card.compact {
+        grid-column: 1 / -1;
+        min-height: 0;
+        padding: 10px 12px;
+        display: grid;
+        grid-template-columns: 52px 50px minmax(140px, 1fr) 105px auto;
+        grid-template-rows: auto auto;
+        align-items: center;
+        gap: 0 9px;
+      }
+
+      .card.compact .card-top {
+        grid-column: 1;
+        grid-row: 1 / 3;
+        margin: 0;
+      }
+
+      .card.compact .image-slot {
+        grid-column: 2;
+        grid-row: 1 / 3;
+        width: 50px;
+        height: 50px;
+        margin: 0;
+        font-size: 0;
+      }
+
+      .card.compact .image-slot::after {
+        content: "صورة";
+        font-size: 0.72rem;
+      }
+
+      .card.compact .name {
+        grid-column: 3;
+        grid-row: 1;
+        margin: 0;
+        font-size: 1.05rem;
+      }
+
+      .card.compact .mini-label {
+        display: none;
+      }
+
+      .card.compact .number-input {
+        grid-column: 4;
+        grid-row: 1 / 3;
+        padding: 7px 9px;
+      }
+
+      .card.compact .actions {
+        grid-column: 5;
+        grid-row: 1 / 3;
+        margin: 0;
+      }
+
+      .card.compact .action-btn {
+        padding: 7px 13px;
+        font-size: 0.85rem;
+      }
+
+      .card.compact .rank-badge {
+        width: 32px;
+        height: 32px;
+        border-radius: 9px;
+        font-size: 0.78rem;
+      }
+
+      .card.compact .medal {
+        font-size: 1.05rem;
+        min-width: 20px;
+        min-height: 22px;
+      }
+
+      .card.compact .result {
+        grid-column: 3;
+        grid-row: 2;
+        margin: 0;
+        font-size: 0.82rem;
+      }
+
+      .ending-action {
+        display: flex;
+        justify-content: center;
+        margin-top: 22px;
+      }
+
+      .ending-btn {
+        border: none;
+        border-radius: 999px;
+        padding: 12px 28px;
+        background: var(--primary);
+        color: white;
+        font-size: 1rem;
+        font-weight: 800;
+        cursor: pointer;
+        box-shadow: 0 10px 22px rgba(181, 111, 141, 0.25);
+      }
+
+      .podium-section {
+        position: fixed;
+        inset: 0;
+        z-index: 2000;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding: 36px max(24px, calc((100vw - 1100px) / 2));
+        overflow-y: auto;
+        background:
+          radial-gradient(circle at 15% 20%, rgba(255, 222, 133, 0.55), transparent 24%),
+          radial-gradient(circle at 85% 75%, rgba(234, 182, 200, 0.55), transparent 27%),
+          linear-gradient(145deg, #fff9ed, #f9e6ec);
+      }
+
+      .podium-section.hidden {
+        display: none;
+      }
+
+      .podium-section h3 {
+        position: relative;
+        z-index: 2;
+        margin: 0 0 42px;
+        text-align: center;
+        color: var(--primary);
+        font-size: clamp(1.7rem, 3vw, 2.5rem);
+      }
+
+      .podium-grid {
+        position: relative;
+        z-index: 2;
+        display: grid;
+        grid-template-columns: repeat(3, minmax(220px, 1fr));
+        gap: 18px;
+      }
+
+      .podium-close {
+        position: absolute;
+        top: 22px;
+        left: 24px;
+        z-index: 3;
+        border: none;
+        border-radius: 999px;
+        padding: 9px 18px;
+        background: rgba(255, 255, 255, 0.8);
+        color: var(--text);
+        font-weight: 800;
+        cursor: pointer;
+        box-shadow: var(--shadow);
+      }
+
+      .celebration span {
+        position: absolute;
+        top: -12%;
+        width: 11px;
+        height: 22px;
+        border-radius: 3px;
+        background: var(--primary-soft);
+        animation: confettiFall 5s linear infinite;
+      }
+
+      .celebration span:nth-child(3n) { background: #f3cf69; }
+      .celebration span:nth-child(3n + 1) { background: #9faadc; }
+      .celebration span:nth-child(1) { left: 7%; animation-delay: -1s; }
+      .celebration span:nth-child(2) { left: 15%; animation-delay: -3.2s; }
+      .celebration span:nth-child(3) { left: 24%; animation-delay: -2s; }
+      .celebration span:nth-child(4) { left: 33%; animation-delay: -4.1s; }
+      .celebration span:nth-child(5) { left: 42%; animation-delay: -0.5s; }
+      .celebration span:nth-child(6) { left: 51%; animation-delay: -2.8s; }
+      .celebration span:nth-child(7) { left: 60%; animation-delay: -1.7s; }
+      .celebration span:nth-child(8) { left: 69%; animation-delay: -4.5s; }
+      .celebration span:nth-child(9) { left: 78%; animation-delay: -2.4s; }
+      .celebration span:nth-child(10) { left: 87%; animation-delay: -3.7s; }
+      .celebration span:nth-child(11) { left: 94%; animation-delay: -1.3s; }
+
+      @keyframes confettiFall {
+        from { transform: translateY(-10vh) rotate(0deg); opacity: 1; }
+        to { transform: translateY(120vh) rotate(720deg); opacity: 0.2; }
+      }
+
+      .rank-badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 38px;
+        height: 38px;
+        border-radius: 11px;
+        background: var(--primary);
+        color: #fff;
+        font-weight: 800;
+        font-size: 0.85rem;
+      }
+
+      .card.gold .rank-badge,
+      .card.silver .rank-badge,
+      .card.bronze .rank-badge {
+        background: rgba(255,255,255,0.25);
+        color: inherit;
+      }
+
+      .medal {
+        font-size: 1.3rem;
+        display: block;
+        min-width: 24px;
+        min-height: 28px;
+      }
+
+      .card-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 8px;
+      }
+
+      .image-slot {
+        width: 100%;
+        aspect-ratio: 1 / 1;
+        border-radius: 14px;
+        background: rgba(255,255,255,0.45);
+        border: 1px dashed rgba(91, 67, 82, 0.25);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--muted);
+        font-size: 0.95rem;
+        margin-bottom: 10px;
+      }
+
+      .image-slot img {
+        width: 100%;
+        height: 100%;
+        display: block;
+        object-fit: cover;
+        border-radius: inherit;
+      }
+
+      .card.compact {
+        cursor: pointer;
+      }
+
+      .card.compact .number-input { cursor: text; }
+      .card.compact .action-btn { cursor: pointer; }
+
+      .detail-modal {
+        position: fixed;
+        inset: 0;
+        z-index: 2200;
+        display: grid;
+        place-items: center;
+        padding: 20px;
+        background: rgba(76, 52, 66, 0.48);
+        backdrop-filter: blur(7px);
+      }
+
+      .detail-modal.hidden {
+        display: none;
+      }
+
+      .detail-card {
+        position: relative;
+        width: min(440px, 100%);
+        max-height: calc(100vh - 40px);
+        overflow-y: auto;
+        padding: 26px;
+        border: 1px solid rgba(255, 255, 255, 0.8);
+        border-radius: 26px;
+        background: var(--cream);
+        box-shadow: 0 25px 70px rgba(75, 53, 87, 0.28);
+        text-align: center;
+      }
+
+      .detail-close {
+        position: absolute;
+        top: 14px;
+        left: 14px;
+        width: 36px;
+        height: 36px;
+        border: none;
+        border-radius: 50%;
+        background: #f4e7ed;
+        color: var(--text);
+        font-size: 1.2rem;
+        cursor: pointer;
+      }
+
+      .detail-image {
+        width: min(270px, 85%);
+        aspect-ratio: 1 / 1;
+        margin: 18px auto;
+        border-radius: 22px;
+        background: #f8edf1;
+        border: 1px dashed rgba(91, 67, 82, 0.25);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--muted);
+        overflow: hidden;
+      }
+
+      .detail-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .detail-name {
+        margin: 0 0 14px;
+        font-size: 1.7rem;
+        color: var(--primary);
+      }
+
+      .detail-info {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+      }
+
+      .detail-info div {
+        padding: 13px;
+        border-radius: 15px;
+        background: #f8eff3;
+      }
+
+      .detail-info span {
+        display: block;
+        margin-bottom: 5px;
+        color: var(--muted);
+        font-size: 0.85rem;
+      }
+
+      .name {
+        font-size: 1.2rem;
+        font-weight: 700;
+        margin: 2px 0 7px;
+      }
+
+      .mini-label {
+        display: block;
+        color: var(--muted);
+        font-size: 0.9rem;
+        margin-bottom: 8px;
+      }
+
+      .number-input {
+        width: 100%;
+        border: 1px solid #e7d8f0;
+        border-radius: 12px;
+        padding: 10px 12px;
+        font-size: 1rem;
+        color: var(--text);
+        outline: none;
+        transition: border-color 0.2s ease;
+      }
+
+      .number-input:focus {
+        border-color: var(--accent);
+      }
+
+      .actions {
+        display: flex;
+        justify-content: flex-end;
+        margin-top: 8px;
+      }
+
+      .action-btn {
+        border: none;
+        border-radius: 999px;
+        padding: 10px 16px;
+        background: var(--accent);
+        color: white;
+        font-weight: 700;
+        cursor: pointer;
+        box-shadow: 0 8px 18px rgba(91, 109, 91, 0.2);
+      }
+
+      .result {
+        margin-top: 12px;
+        font-size: 0.95rem;
+        color: var(--primary);
+        font-weight: 700;
+      }
+
+      .motivation-banner {
+        position: absolute;
+        top: -10px;
+        left: 0;
+        width: min(620px, 72%);
+        margin: 0;
+        background: rgba(255,255,255,0.88);
+        border: 1px solid rgba(139, 106, 79, 0.16);
+        border-radius: 18px;
+        padding: 16px 20px;
+        box-shadow: var(--shadow);
+        opacity: 0;
+        transform: translateY(-30px);
+        animation: none;
+        z-index: 1000;
+        pointer-events: none;
+      }
+
+      .motivation-banner:empty {
+        display: none;
+      }
+
+      .motivation-banner h3 {
+        margin: 0 0 6px;
+        color: var(--primary);
+      }
+
+      .motivation-banner p {
+        margin: 0;
+        line-height: 1.8;
+        color: var(--muted);
+      }
+
+      @keyframes drift {
+        from { transform: translate(0, 0) scale(1); }
+        to { transform: translate(-20px, 20px) scale(1.06); }
+      }
+
+      @keyframes slideDownFade {
+        0% { opacity: 0; transform: translateY(-30px); }
+        4% { opacity: 1; transform: translateY(0); }
+        88% { opacity: 1; transform: translateY(20px); }
+        100% { opacity: 0; transform: translateY(55px); }
+      }
+
+      @media (max-width: 600px) {
+        body { padding: 14px; }
+        .hero { padding: 24px; }
+        .panel { padding: 18px; }
+        .grid { grid-template-columns: 1fr; }
+        .card.top-first,
+        .card.top-second,
+        .card.top-third {
+          grid-column: auto;
+          grid-row: auto;
+          transform: none;
+        }
+
+        .card.compact {
+          grid-template-columns: 45px 40px minmax(90px, 1fr) auto;
+        }
+
+        .card.compact .image-slot {
+          width: 40px;
+          height: 40px;
+        }
+
+        .card.compact .number-input {
+          grid-column: 3;
+          grid-row: 3;
+        }
+
+        .card.compact .actions {
+          grid-column: 4;
+          grid-row: 3;
+        }
+
+        .podium-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page">
+      <section class="hero">
+        <h1>مسابقة السرد القرآني</h1>
+        <div class="circle-name">حِلَقُ الجنة</div>
+        <p>«إذا مررتم برياض الجنة فارتعوا»</p>
+      </section>
+
+      <section class="panel">
+        <div class="panel-header">
+          <h2>الترتيب الحالي</h2>
+          <div id="motivation-banner" class="motivation-banner"></div>
+        </div>
+        <div id="rankings" class="grid"></div>
+        <div class="ending-action">
+          <button id="ending-btn" class="ending-btn" type="button">نهاية السرد</button>
+        </div>
+      </section>
+    </div>
+
+    <section id="podium-section" class="podium-section hidden" role="dialog" aria-modal="true" aria-labelledby="podium-title">
+      <button id="podium-close" class="podium-close" type="button">إغلاق</button>
+      <div class="celebration" aria-hidden="true">
+        <span></span><span></span><span></span><span></span><span></span><span></span>
+        <span></span><span></span><span></span><span></span><span></span>
+      </div>
+      <h3 id="podium-title">نتائج المراكز الثلاثة الأولى</h3>
+      <div id="podium-rankings" class="podium-grid"></div>
+    </section>
+
+    <div id="detail-modal" class="detail-modal hidden" role="dialog" aria-modal="true" aria-labelledby="detail-name">
+      <article class="detail-card">
+        <button id="detail-close" class="detail-close" type="button" aria-label="إغلاق">×</button>
+        <div id="detail-image" class="detail-image"></div>
+        <h3 id="detail-name" class="detail-name"></h3>
+        <div class="detail-info">
+          <div><span>عدد الصفحات</span><strong id="detail-number"></strong></div>
+          <div><span>الترتيب الحالي</span><strong id="detail-rank"></strong></div>
+        </div>
+      </article>
+    </div>
+
+    <script>
+      const contestants = [
+        { name: "سارة", number: 0 },
+        { name: "مريم", number: 0 },
+        { name: "نور", number: 0 },
+        { name: "سلمى", number: 0 },
+        { name: "لينا", number: 0 },
+        { name: "أمنية", number: 0 },
+        { name: "رغد", number: 0 },
+        { name: "فاطمة", number: 0 },
+        { name: "تسنيم", number: 0 }
+      ];
+
+      const rankingsContainer = document.getElementById("rankings");
+      const podiumContainer = document.getElementById("podium-rankings");
+      const podiumSection = document.getElementById("podium-section");
+      const endingButton = document.getElementById("ending-btn");
+      const podiumClose = document.getElementById("podium-close");
+      const detailModal = document.getElementById("detail-modal");
+      const detailClose = document.getElementById("detail-close");
+      const detailImage = document.getElementById("detail-image");
+      const detailName = document.getElementById("detail-name");
+      const detailNumber = document.getElementById("detail-number");
+      const detailRank = document.getElementById("detail-rank");
+      const motivationBanner = document.getElementById("motivation-banner");
+      const motivationMessages = [
+        { text: "﴿إِنَّ هَذَا الْقُرْآنَ يَهْدِي لِلَّتِي هِيَ أَقْوَمُ﴾", source: "سورة الإسراء: 9" },
+        { text: "﴿وَلَقَدْ يَسَّرْنَا الْقُرْآنَ لِلذِّكْرِ فَهَلْ مِنْ مُدَّكِرٍ﴾", source: "سورة القمر: 17" },
+        { text: "﴿أَلَا بِذِكْرِ اللَّهِ تَطْمَئِنُّ الْقُلُوبُ﴾", source: "سورة الرعد: 28" },
+        { text: "خيركم من تعلم القرآن وعلمه", source: "رواه البخاري" },
+        { text: "اقرؤوا القرآن؛ فإنه يأتي يوم القيامة شفيعًا لأصحابه", source: "رواه مسلم" },
+        { text: "﴿هَذَا بَصَائِرُ لِلنَّاسِ وَهُدًى وَرَحْمَةٌ لِقَوْمٍ يُوقِنُونَ﴾", source: "سورة الجاثية: 20" },
+        { text: "﴿وَالَّذِينَ جَاهَدُوا فِينَا لَنَهْدِيَنَّهُمْ سُبُلَنَا﴾", source: "سورة العنكبوت: 69" },
+        { text: "الماهر بالقرآن مع السفرة الكرام البررة", source: "متفق عليه" },
+        { text: "إن الله يرفع بهذا الكتاب أقوامًا ويضع به آخرين", source: "رواه مسلم" },
+        { text: "يقال لصاحب القرآن: اقرأ وارتقِ ورتّل", source: "رواه أبو داود والترمذي" },
+        { text: "تعاهدوا هذا القرآن", source: "متفق عليه" },
+        { text: "إن لله أهلين من الناس... أهل القرآن هم أهل الله وخاصته", source: "رواه ابن ماجه وأحمد" },
+        { text: "إنَّ هذا القرآنَ سببٌ، طرفُه بيدِ الله، وطرفُه بأيديكم، فتمسَّكوا به؛ فإنكم لن تضلُّوا ولن تهلِكوا بعده أبدًا", source: "رواه ابن حبان والطبراني، وصححه الألباني" }
+      ];
+
+      function getOrdinal(number) {
+        if (number === 1) return "الأولى";
+        if (number === 2) return "الثانية";
+        if (number === 3) return "الثالثة";
+        if (number === 4) return "الرابعة";
+        if (number === 5) return "الخامسة";
+        if (number === 6) return "السادسة";
+        if (number === 7) return "السابعة";
+        if (number === 8) return "الثامنة";
+        if (number === 9) return "التاسعة";
+        return "بدون ترتيب";
+      }
+
+      function renderMotivationMessage() {
+        const message = motivationMessages[Math.floor(Math.random() * motivationMessages.length)];
+        motivationBanner.innerHTML = `<h3>رسالة تحفيزية</h3><p>${message.text}<br><small>${message.source}</small></p>`;
+        motivationBanner.style.animation = "none";
+        void motivationBanner.offsetWidth;
+        motivationBanner.style.animation = "slideDownFade 12s ease forwards";
+
+      }
+
+      function renderRankings() {
+        const sorted = [...contestants].sort((a, b) => {
+          // عند تساوي النتائج (ومنها حالة البداية) يكون الترتيب أبجديًا.
+          if (a.number === b.number) return a.name.localeCompare(b.name, "ar");
+          return b.number - a.number;
+        });
+
+        const rankedContestants = sorted.filter((item) => item.number > 0);
+
+        rankingsContainer.innerHTML = "";
+        podiumContainer.innerHTML = "";
+
+        function createContestantCard(contestant, index, compact = false) {
+          const card = document.createElement("article");
+          card.className = "card neutral";
+
+          const activeRank = rankedContestants.findIndex(
+            (item) => item.name === contestant.name
+          );
+
+          if (activeRank === 0) card.classList.replace("neutral", "gold");
+          else if (activeRank === 1) card.classList.replace("neutral", "silver");
+          else if (activeRank === 2) card.classList.replace("neutral", "bronze");
+
+          if (compact) {
+            card.classList.add("compact");
+          } else if (index === 0) {
+              card.classList.add("top-first");
+              if (activeRank === 0) card.classList.add("is-ranked");
+          }
+          else if (index === 1) card.classList.add("top-second");
+          else if (index === 2) card.classList.add("top-third");
+
+          const hasResult = contestant.number > 0;
+          const rankText = hasResult ? activeRank + 1 : 0;
+          const medal = activeRank === 0 ? "🥇" : activeRank === 1 ? "🥈" : activeRank === 2 ? "🥉" : "";
+          const inputId = `${compact ? "list" : "podium"}-number-${index}`;
+          const imageContent = contestant.image
+            ? `<img src="${contestant.image}" alt="صورة ${contestant.name}">`
+            : "مكان للصورة";
+          card.innerHTML = `
+            <div class="card-top">
+              <div class="rank-badge">${hasResult ? rankText : "—"}</div>
+              <div class="medal">${medal}</div>
+            </div>
+            <div class="image-slot">${imageContent}</div>
+            <div class="name">${contestant.name}</div>
+            <label class="mini-label" for="${inputId}">عدد الصفحات</label>
+            <input class="number-input" id="${inputId}" type="number" min="0" max="999" value="${contestant.number}" />
+            <div class="actions">
+              <button class="action-btn" type="button">تعديل</button>
+            </div>
+            <div class="result">${hasResult ? `${getOrdinal(rankText)} الآن` : "لم يبدأ العداد بعد"}</div>
+          `;
+
+          const input = card.querySelector(".number-input");
+          const button = card.querySelector(".action-btn");
+
+          button.addEventListener("click", () => {
+            const target = contestants.find((item) => item.name === contestant.name);
+            if (target) {
+              target.number = Math.max(0, Number(input.value) || 0);
+            }
+            renderRankings();
+          });
+
+          if (compact) {
+            card.addEventListener("click", (event) => {
+              if (event.target.closest("input, button, label")) return;
+              openContestantDetails(contestant);
+            });
+          }
+
+          return card;
+        }
+
+        function createEmptyPodiumCard(index) {
+          const card = document.createElement("article");
+          card.className = "card neutral podium-placeholder";
+
+          if (index === 0) card.classList.add("top-first");
+          else if (index === 1) card.classList.add("top-second");
+          else card.classList.add("top-third");
+
+          card.innerHTML = `
+            <div class="card-top">
+              <div class="rank-badge">—</div>
+              <div class="medal"></div>
+            </div>
+            <div class="image-slot">مكان للصورة</div>
+          `;
+
+          return card;
+        }
+
+        // بطاقات التتويج الكبيرة في الأعلى.
+        for (let index = 0; index < 3; index += 1) {
+          const contestant = rankedContestants[index];
+          const podiumCard = contestant
+            ? createContestantCard(contestant, index)
+            : createEmptyPodiumCard(index);
+          podiumContainer.appendChild(podiumCard);
+        }
+
+        // القائمة الكاملة، وتشمل المراكز الثلاثة الأولى أيضاً.
+        sorted.forEach((contestant, index) => {
+          rankingsContainer.appendChild(createContestantCard(contestant, index, true));
+        });
+      }
+
+      function openContestantDetails(contestant) {
+        const sorted = [...contestants].sort((a, b) => {
+          if (a.number === b.number) return a.name.localeCompare(b.name, "ar");
+          return b.number - a.number;
+        });
+        const ranked = sorted.filter((item) => item.number > 0);
+        const rank = ranked.findIndex((item) => item.name === contestant.name);
+
+        detailImage.innerHTML = contestant.image
+          ? `<img src="${contestant.image}" alt="صورة ${contestant.name}">`
+          : "مكان للصورة";
+        detailName.textContent = contestant.name;
+        detailNumber.textContent = contestant.number;
+        detailRank.textContent = rank >= 0 ? getOrdinal(rank + 1) : "لم يبدأ بعد";
+        detailModal.classList.remove("hidden");
+        document.body.style.overflow = "hidden";
+        detailClose.focus();
+      }
+
+      function closeContestantDetails() {
+        detailModal.classList.add("hidden");
+        document.body.style.overflow = "";
+      }
+
+      detailClose.addEventListener("click", closeContestantDetails);
+      detailModal.addEventListener("click", (event) => {
+        if (event.target === detailModal) closeContestantDetails();
+      });
+
+      endingButton.addEventListener("click", () => {
+        podiumSection.classList.remove("hidden");
+        document.body.style.overflow = "hidden";
+        podiumClose.focus();
+      });
+
+      podiumClose.addEventListener("click", () => {
+        podiumSection.classList.add("hidden");
+        document.body.style.overflow = "";
+        endingButton.focus();
+      });
+
+      document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape") {
+          if (!detailModal.classList.contains("hidden")) closeContestantDetails();
+          else if (!podiumSection.classList.contains("hidden")) podiumClose.click();
+        }
+      });
+
+      setTimeout(() => {
+        renderMotivationMessage();
+        setInterval(renderMotivationMessage, 30000);
+      }, 10000);
+      renderRankings();
+    </script>
+  </body>
+</html>
