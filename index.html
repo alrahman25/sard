@@ -737,10 +737,9 @@
       }
 
       @keyframes slideDownFade {
-        0% { opacity: 0; transform: translateY(-30px); }
-        4% { opacity: 1; transform: translateY(0); }
-        88% { opacity: 1; transform: translateY(20px); }
-        100% { opacity: 0; transform: translateY(55px); }
+        0% { opacity: 1; transform: translateY(0); }
+        96.7% { opacity: 1; transform: translateY(0); }
+        100% { opacity: 0; transform: translateY(18px); }
       }
 
       @media (max-width: 600px) {
@@ -934,7 +933,7 @@
         motivationBanner.innerHTML = `<h3>رسالة تحفيزية</h3><p>${message.text}<br><small>${message.source}</small></p>`;
         motivationBanner.style.animation = "none";
         void motivationBanner.offsetWidth;
-        motivationBanner.style.animation = "slideDownFade 12s ease forwards";
+        motivationBanner.style.animation = "slideDownFade 31s ease forwards";
 
       }
 
@@ -1150,7 +1149,7 @@
       });
 
       renderMotivationMessage();
-      setInterval(renderMotivationMessage, 12000);
+      setInterval(renderMotivationMessage, 3 * 60 * 1000);
       renderRankings();
     </script>
   </body>
