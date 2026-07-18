@@ -266,9 +266,10 @@
         height: 50px;
         margin: 0;
         font-size: 0;
+        overflow: hidden;
       }
 
-      .card.compact .image-slot::after {
+      .card.compact .image-slot:not(:has(img))::after {
         content: "صورة";
         font-size: 0.72rem;
       }
@@ -345,7 +346,7 @@
         z-index: 2000;
         display: flex;
         flex-direction: column;
-        justify-content: center;
+        justify-content: flex-start;
         padding: 36px max(24px, calc((100vw - 1100px) / 2));
         overflow-y: auto;
         background:
@@ -375,6 +376,33 @@
         gap: 18px;
       }
 
+      .ending-remaining-title {
+        position: relative;
+        z-index: 2;
+        margin: 58px 0 22px;
+        text-align: center;
+        color: var(--primary);
+        font-size: clamp(1.4rem, 2.5vw, 2rem);
+      }
+
+      .ending-remaining-list {
+        position: relative;
+        z-index: 2;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 18px;
+        padding-bottom: 28px;
+      }
+
+      .ending-remaining-list .card {
+        width: min(100%, 340px);
+        flex: 0 0 auto;
+        background: #f5e6ec;
+        color: var(--text);
+        border-color: rgba(181, 111, 141, 0.25);
+      }
+
       .podium-close {
         position: absolute;
         top: 22px;
@@ -388,6 +416,55 @@
         font-weight: 800;
         cursor: pointer;
         box-shadow: var(--shadow);
+      }
+
+      .thank-you-button {
+        position: absolute;
+        top: 70px;
+        left: 24px;
+        z-index: 3;
+        border: none;
+        border-radius: 999px;
+        padding: 9px 16px;
+        background: var(--primary);
+        color: white;
+        font-weight: 800;
+        cursor: pointer;
+        box-shadow: var(--shadow);
+      }
+
+      .teacher-thanks-button {
+        top: 118px;
+        background: #7d687f;
+      }
+
+      .thank-you-button .heart {
+        display: inline-block;
+        margin-right: 5px;
+        animation: heartBeat 1.4s ease-in-out infinite;
+      }
+
+      .thank-you-card h3 {
+        margin: 10px 0 16px;
+        color: var(--primary);
+        font-size: 1.8rem;
+      }
+
+      .thank-you-heart {
+        font-size: 3rem;
+        line-height: 1;
+      }
+
+      .thank-you-card p {
+        margin: 0;
+        color: var(--text);
+        font-size: 1.08rem;
+        line-height: 2;
+      }
+
+      @keyframes heartBeat {
+        0%, 100% { transform: scale(1); }
+        45% { transform: scale(1.22); }
       }
 
       .celebration span {
@@ -726,13 +803,44 @@
 
     <section id="podium-section" class="podium-section hidden" role="dialog" aria-modal="true" aria-labelledby="podium-title">
       <button id="podium-close" class="podium-close" type="button">إغلاق</button>
+      <button id="thank-you-button" class="thank-you-button" type="button">رسالة شكر <span class="heart">♥</span></button>
+      <button id="teacher-thanks-button" class="thank-you-button teacher-thanks-button" type="button">إلى آنستنا <span class="heart">♥</span></button>
       <div class="celebration" aria-hidden="true">
         <span></span><span></span><span></span><span></span><span></span><span></span>
         <span></span><span></span><span></span><span></span><span></span>
       </div>
       <h3 id="podium-title">نتائج المراكز الثلاثة الأولى</h3>
       <div id="podium-rankings" class="podium-grid"></div>
+      <h4 class="ending-remaining-title">باقي الترتيب</h4>
+      <div id="ending-remaining-rankings" class="ending-remaining-list"></div>
     </section>
+
+    <div id="thank-you-modal" class="detail-modal hidden" role="dialog" aria-modal="true" aria-labelledby="thank-you-title">
+      <article class="detail-card thank-you-card">
+        <button id="thank-you-close" class="detail-close" type="button" aria-label="إغلاق">×</button>
+        <div class="thank-you-heart" aria-hidden="true">♥</div>
+        <h3 id="thank-you-title">شكرًا لكنّ من القلب</h3>
+        <p>
+          شكرًا لكنّ على همّتكنّ الجميلة، وعلى مساهمتكنّ في إنجاح هذا المشروع القرآني المبارك.
+          بارك الله في أوقاتكنّ وجهودكنّ، وجعل القرآن ربيع قلوبكنّ ونور صدوركنّ،
+          ورفعكنّ به درجات، وجمعنا وإياكنّ في جنات النعيم.
+        </p>
+      </article>
+    </div>
+
+    <div id="teacher-thanks-modal" class="detail-modal hidden" role="dialog" aria-modal="true" aria-labelledby="teacher-thanks-title">
+      <article class="detail-card thank-you-card">
+        <button id="teacher-thanks-close" class="detail-close" type="button" aria-label="إغلاق">×</button>
+        <div class="thank-you-heart" aria-hidden="true">♥</div>
+        <h3 id="teacher-thanks-title">إلى آنستنا الغالية</h3>
+        <p>
+          جزاكِ الله عنا خير الجزاء، وبارك في علمكِ وعملكِ ووقتكِ،
+          وأقرّ عينكِ بنا وبما غرستِه في قلوبنا من حب القرآن والقرب من الله.
+          شكرًا لصبركِ وعطائكِ وتشجيعكِ الدائم، وجعل الله كل حرفٍ علّمتِنا إياه
+          نورًا لكِ ورفعةً في درجاتكِ، ورزقكِ سعادة الدارين ورضاه.
+        </p>
+      </article>
+    </div>
 
     <div id="detail-modal" class="detail-modal hidden" role="dialog" aria-modal="true" aria-labelledby="detail-name">
       <article class="detail-card">
@@ -748,22 +856,35 @@
 
     <script>
       const contestants = [
-        { name: "سارة", number: 0 },
-        { name: "مريم", number: 0 },
-        { name: "نور", number: 0 },
-        { name: "سلمى", number: 0 },
-        { name: "لينا", number: 0 },
-        { name: "أمنية", number: 0 },
-        { name: "رغد", number: 0 },
-        { name: "فاطمة", number: 0 },
-        { name: "تسنيم", number: 0 }
+        { name: "ندى الرفاعي", number: 0, image: "ندى الرفاعي.jpg" },
+        { name: "شام الحمود", number: 0, image: "شام الحمود.jpg" },
+        { name: "حنين نبكي", number: 0, image: "حنين نبكي.jpg" },
+        { name: "لجين الفرا", number: 0, image: "لجين الفرا.jpg" },
+        { name: "ليان نبكي", number: 0, image: "ليان نبكي.jpg" },
+        { name: "تسنيم قره بلا", number: 0, image: "تسنيم قره بلا.jpg" },
+        { name: "فرح الخولي", number: 0, image: "فرح الخولي.jpg" },
+        { name: "سيدرة الصائغي", number: 0, image: "سيدرة الصائغي.jpg" },
+        { name: "ليا الحموي", number: 0, image: "ليا الحموي.jpg" },
+        { name: "اية الحمصي", number: 0, image: "اية الحمصي.jpg" },
+        { name: "ماسة قشلان", number: 0, image: "ماسة قشلان.jpg" },
+        { name: "شام الخطيب", number: 0, image: "شام الخطيب.jpg" },
+        { name: "ماسة يحيى", number: 0, image: "ماسة يحيى.jpg" },
+        { name: "ليان المصري", number: 0, image: "ليان المصري.jpg" },
+        { name: "لين الاحمد", number: 0, image: "لين الاحمد.jpg" }
       ];
 
       const rankingsContainer = document.getElementById("rankings");
       const podiumContainer = document.getElementById("podium-rankings");
+      const endingRemainingContainer = document.getElementById("ending-remaining-rankings");
       const podiumSection = document.getElementById("podium-section");
       const endingButton = document.getElementById("ending-btn");
       const podiumClose = document.getElementById("podium-close");
+      const thankYouButton = document.getElementById("thank-you-button");
+      const thankYouModal = document.getElementById("thank-you-modal");
+      const thankYouClose = document.getElementById("thank-you-close");
+      const teacherThanksButton = document.getElementById("teacher-thanks-button");
+      const teacherThanksModal = document.getElementById("teacher-thanks-modal");
+      const teacherThanksClose = document.getElementById("teacher-thanks-close");
       const detailModal = document.getElementById("detail-modal");
       const detailClose = document.getElementById("detail-close");
       const detailImage = document.getElementById("detail-image");
@@ -784,8 +905,9 @@
         { text: "يقال لصاحب القرآن: اقرأ وارتقِ ورتّل", source: "رواه أبو داود والترمذي" },
         { text: "تعاهدوا هذا القرآن", source: "متفق عليه" },
         { text: "إن لله أهلين من الناس... أهل القرآن هم أهل الله وخاصته", source: "رواه ابن ماجه وأحمد" },
-        { text: "إنَّ هذا القرآنَ سببٌ، طرفُه بيدِ الله، وطرفُه بأيديكم، فتمسَّكوا به؛ فإنكم لن تضلُّوا ولن تهلِكوا بعده أبدًا", source: "رواه ابن حبان والطبراني، وصححه الألباني" }
+        { text: "فتمسَّكوا به؛ فإنكم لن تضلُّوا ولن تهلِكوا بعده أبدًا", source: "رواه ابن حبان والطبراني، وصححه الألباني" }
       ];
+      let motivationMessageIndex = 0;
 
       function getOrdinal(number) {
         if (number === 1) return "الأولى";
@@ -797,11 +919,18 @@
         if (number === 7) return "السابعة";
         if (number === 8) return "الثامنة";
         if (number === 9) return "التاسعة";
+        if (number === 10) return "العاشرة";
+        if (number === 11) return "الحادية عشرة";
+        if (number === 12) return "الثانية عشرة";
+        if (number === 13) return "الثالثة عشرة";
+        if (number === 14) return "الرابعة عشرة";
+        if (number === 15) return "الخامسة عشرة";
         return "بدون ترتيب";
       }
 
       function renderMotivationMessage() {
-        const message = motivationMessages[Math.floor(Math.random() * motivationMessages.length)];
+        const message = motivationMessages[motivationMessageIndex];
+        motivationMessageIndex = (motivationMessageIndex + 1) % motivationMessages.length;
         motivationBanner.innerHTML = `<h3>رسالة تحفيزية</h3><p>${message.text}<br><small>${message.source}</small></p>`;
         motivationBanner.style.animation = "none";
         void motivationBanner.offsetWidth;
@@ -820,10 +949,12 @@
 
         rankingsContainer.innerHTML = "";
         podiumContainer.innerHTML = "";
+        endingRemainingContainer.innerHTML = "";
 
-        function createContestantCard(contestant, index, compact = false) {
+        function createContestantCard(contestant, index, compact = false, podiumPosition = true, idPrefix = "card", displayOnly = false) {
           const card = document.createElement("article");
           card.className = "card neutral";
+          if (displayOnly) card.classList.add("final-result-card");
 
           const activeRank = rankedContestants.findIndex(
             (item) => item.name === contestant.name
@@ -835,20 +966,30 @@
 
           if (compact) {
             card.classList.add("compact");
-          } else if (index === 0) {
+          } else if (podiumPosition && index === 0) {
               card.classList.add("top-first");
               if (activeRank === 0) card.classList.add("is-ranked");
           }
-          else if (index === 1) card.classList.add("top-second");
-          else if (index === 2) card.classList.add("top-third");
+          else if (podiumPosition && index === 1) card.classList.add("top-second");
+          else if (podiumPosition && index === 2) card.classList.add("top-third");
 
           const hasResult = contestant.number > 0;
           const rankText = hasResult ? activeRank + 1 : 0;
           const medal = activeRank === 0 ? "🥇" : activeRank === 1 ? "🥈" : activeRank === 2 ? "🥉" : "";
-          const inputId = `${compact ? "list" : "podium"}-number-${index}`;
+          const inputId = `${idPrefix}-number-${index}`;
           const imageContent = contestant.image
-            ? `<img src="${contestant.image}" alt="صورة ${contestant.name}">`
+            ? `<img src="${contestant.image}" alt="صورة ${contestant.name}" onerror="this.parentElement.textContent='مكان للصورة'">`
             : "مكان للصورة";
+          const controlsContent = displayOnly ? "" : `
+            <label class="mini-label" for="${inputId}">عدد الصفحات</label>
+            <input class="number-input" id="${inputId}" type="number" min="0" max="999" value="${contestant.number}" />
+            <div class="actions">
+              <button class="action-btn" type="button">تعديل</button>
+            </div>
+          `;
+          const resultText = hasResult
+            ? displayOnly ? getOrdinal(rankText) : `${getOrdinal(rankText)} الآن`
+            : "لم يبدأ العداد بعد";
           card.innerHTML = `
             <div class="card-top">
               <div class="rank-badge">${hasResult ? rankText : "—"}</div>
@@ -856,24 +997,22 @@
             </div>
             <div class="image-slot">${imageContent}</div>
             <div class="name">${contestant.name}</div>
-            <label class="mini-label" for="${inputId}">عدد الصفحات</label>
-            <input class="number-input" id="${inputId}" type="number" min="0" max="999" value="${contestant.number}" />
-            <div class="actions">
-              <button class="action-btn" type="button">تعديل</button>
-            </div>
-            <div class="result">${hasResult ? `${getOrdinal(rankText)} الآن` : "لم يبدأ العداد بعد"}</div>
+            ${controlsContent}
+            <div class="result">${resultText}</div>
           `;
 
-          const input = card.querySelector(".number-input");
-          const button = card.querySelector(".action-btn");
+          if (!displayOnly) {
+            const input = card.querySelector(".number-input");
+            const button = card.querySelector(".action-btn");
 
-          button.addEventListener("click", () => {
-            const target = contestants.find((item) => item.name === contestant.name);
-            if (target) {
-              target.number = Math.max(0, Number(input.value) || 0);
-            }
-            renderRankings();
-          });
+            button.addEventListener("click", () => {
+              const target = contestants.find((item) => item.name === contestant.name);
+              if (target) {
+                target.number = Math.max(0, Number(input.value) || 0);
+              }
+              renderRankings();
+            });
+          }
 
           if (compact) {
             card.addEventListener("click", (event) => {
@@ -908,14 +1047,23 @@
         for (let index = 0; index < 3; index += 1) {
           const contestant = rankedContestants[index];
           const podiumCard = contestant
-            ? createContestantCard(contestant, index)
+            ? createContestantCard(contestant, index, false, true, "podium", true)
             : createEmptyPodiumCard(index);
           podiumContainer.appendChild(podiumCard);
         }
 
+        // بقية الترتيب في شاشة نهاية السرد، ببطاقات كبيرة وبلون موحد.
+        const topThreeNames = new Set(rankedContestants.slice(0, 3).map((item) => item.name));
+        const endingRemaining = sorted.filter((item) => !topThreeNames.has(item.name));
+        endingRemaining.forEach((contestant, index) => {
+          endingRemainingContainer.appendChild(
+            createContestantCard(contestant, index, false, false, "ending-list", true)
+          );
+        });
+
         // القائمة الكاملة، وتشمل المراكز الثلاثة الأولى أيضاً.
         sorted.forEach((contestant, index) => {
-          rankingsContainer.appendChild(createContestantCard(contestant, index, true));
+          rankingsContainer.appendChild(createContestantCard(contestant, index, true, false, "main-list"));
         });
       }
 
@@ -928,7 +1076,7 @@
         const rank = ranked.findIndex((item) => item.name === contestant.name);
 
         detailImage.innerHTML = contestant.image
-          ? `<img src="${contestant.image}" alt="صورة ${contestant.name}">`
+          ? `<img src="${contestant.image}" alt="صورة ${contestant.name}" onerror="this.parentElement.textContent='مكان للصورة'">`
           : "مكان للصورة";
         detailName.textContent = contestant.name;
         detailNumber.textContent = contestant.number;
@@ -955,22 +1103,54 @@
       });
 
       podiumClose.addEventListener("click", () => {
+        thankYouModal.classList.add("hidden");
+        teacherThanksModal.classList.add("hidden");
         podiumSection.classList.add("hidden");
         document.body.style.overflow = "";
         endingButton.focus();
       });
 
+      thankYouButton.addEventListener("click", () => {
+        thankYouModal.classList.remove("hidden");
+        thankYouClose.focus();
+      });
+
+      function closeThankYouMessage() {
+        thankYouModal.classList.add("hidden");
+        thankYouButton.focus();
+      }
+
+      thankYouClose.addEventListener("click", closeThankYouMessage);
+      thankYouModal.addEventListener("click", (event) => {
+        if (event.target === thankYouModal) closeThankYouMessage();
+      });
+
+      teacherThanksButton.addEventListener("click", () => {
+        teacherThanksModal.classList.remove("hidden");
+        teacherThanksClose.focus();
+      });
+
+      function closeTeacherThanksMessage() {
+        teacherThanksModal.classList.add("hidden");
+        teacherThanksButton.focus();
+      }
+
+      teacherThanksClose.addEventListener("click", closeTeacherThanksMessage);
+      teacherThanksModal.addEventListener("click", (event) => {
+        if (event.target === teacherThanksModal) closeTeacherThanksMessage();
+      });
+
       document.addEventListener("keydown", (event) => {
         if (event.key === "Escape") {
-          if (!detailModal.classList.contains("hidden")) closeContestantDetails();
+          if (!teacherThanksModal.classList.contains("hidden")) closeTeacherThanksMessage();
+          else if (!thankYouModal.classList.contains("hidden")) closeThankYouMessage();
+          else if (!detailModal.classList.contains("hidden")) closeContestantDetails();
           else if (!podiumSection.classList.contains("hidden")) podiumClose.click();
         }
       });
 
-      setTimeout(() => {
-        renderMotivationMessage();
-        setInterval(renderMotivationMessage, 30000);
-      }, 10000);
+      renderMotivationMessage();
+      setInterval(renderMotivationMessage, 12000);
       renderRankings();
     </script>
   </body>
